@@ -1,0 +1,145 @@
+/* Story Hero */
+.story-hero {
+  background-image: url('/images/hero/hero-3.jpg');
+}
+
+/* Family Business */
+.story-family {
+  text-align: center;
+}
+
+.story-family-inner {
+  max-width: var(--max-width-narrow);
+  margin: 0 auto;
+}
+
+.story-family h2 {
+  margin-bottom: var(--space-xl);
+}
+
+.founder-quote {
+  border-left: 3px solid var(--color-accent);
+  padding: var(--space-lg) var(--space-xl);
+  text-align: left;
+  background: var(--color-bg-warm);
+  border-radius: 2px;
+}
+
+.founder-quote p {
+  font-family: var(--font-accent);
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: var(--space-lg);
+  color: var(--color-text);
+}
+
+.founder-quote footer {
+  font-size: 0.95rem;
+  color: var(--color-text-light);
+  letter-spacing: 0.02em;
+}
+
+.founder-quote footer strong {
+  color: var(--color-text);
+}
+
+/* Expert Designers */
+.story-designers-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+  align-items: center;
+}
+
+.story-designers-text h2 {
+  margin-bottom: var(--space-lg);
+}
+
+.story-designers-text p {
+  margin-bottom: var(--space-md);
+  font-size: 1.05rem;
+}
+
+.story-image-placeholder {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: center/cover no-repeat;
+  border-radius: 2px;
+}
+
+/* Values */
+.story-values {
+  background: var(--color-bg-warm);
+}
+
+.story-values-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-lg);
+}
+
+.value-item {
+  text-align: center;
+}
+
+.value-line {
+  width: 40px;
+  height: 2px;
+  background: var(--color-accent);
+  margin: 0 auto var(--space-lg);
+}
+
+.value-item h3 {
+  margin-bottom: var(--space-md);
+  font-size: 1.15rem;
+}
+
+.value-item p {
+  font-size: 0.95rem;
+}
+
+/* CTA */
+.story-cta {
+  text-align: center;
+}
+
+.story-cta-inner {
+  max-width: var(--max-width-narrow);
+  margin: 0 auto;
+}
+
+.story-cta h2 {
+  margin-bottom: var(--space-md);
+}
+
+.story-cta p {
+  font-size: 1.1rem;
+  font-family: var(--font-accent);
+  margin-bottom: var(--space-xl);
+}
+
+@media (max-width: 768px) {
+  .story-designers-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .founder-quote {
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .values-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .values-grid {
+    grid-template-columns: 1fr;
+  }
+}
