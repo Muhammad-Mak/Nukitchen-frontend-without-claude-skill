@@ -139,6 +139,12 @@
   border-bottom-color: var(--color-accent);
 }
 
+.char-count {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-align: right;
+}
+
 .contact-form-fields .btn-primary {
   align-self: center;
   margin-top: var(--space-md);

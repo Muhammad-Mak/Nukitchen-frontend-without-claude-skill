@@ -136,8 +136,10 @@ function Showroom() {
                 value={formData.message}
                 onChange={handleChange}
                 rows={5}
+                maxLength={500}
                 placeholder="Tell us about your project..."
               />
+              <span className="char-count">{formData.message.length}/500</span>
             </div>
             <button type="submit" className="btn-primary">Send Message</button>
           </form>

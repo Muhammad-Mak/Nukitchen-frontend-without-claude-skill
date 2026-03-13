@@ -51,13 +51,15 @@
   font-weight: 500;
   letter-spacing: 0.5px;
   color: var(--color-white);
-  transition: color var(--transition-fast);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: color var(--transition-fast), text-shadow var(--transition-fast);
   position: relative;
 }
 
 .navbar.scrolled .navbar-links a,
 .navbar.navbar-dark .navbar-links a {
   color: var(--color-text);
+  text-shadow: none;
 }
 
 .navbar-links a::after {
@@ -77,6 +79,11 @@
 
 .navbar-phone {
   font-weight: 600 !important;
+  color: var(--color-white) !important;
+}
+
+.navbar.scrolled .navbar-phone,
+.navbar.navbar-dark .navbar-phone {
   color: var(--color-accent) !important;
 }
 

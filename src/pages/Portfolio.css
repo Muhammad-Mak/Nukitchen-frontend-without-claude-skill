@@ -22,6 +22,11 @@
   z-index: 1;
 }
 
+.page-hero-content .section-label {
+  color: var(--color-white);
+  opacity: 0.9;
+}
+
 .page-hero-content h1 {
   color: var(--color-white);
   font-size: clamp(2.5rem, 5vw, 4rem);
