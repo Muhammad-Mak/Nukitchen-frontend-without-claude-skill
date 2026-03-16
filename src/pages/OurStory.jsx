@@ -1,10 +1,21 @@
 import { Link } from 'react-router-dom'
+import { useReveal, useRevealChildren, useHeroScroll, useParallaxImages } from '../hooks/useScrollAnimations'
 import './OurStory.css'
 
 function OurStory() {
+  const heroRef = useHeroScroll()
+  const familyRef = useReveal()
+  const designersTextRef = useReveal()
+  const designersImgRef = useParallaxImages()
+  const valuesRef = useRevealChildren()
+  const ctaRef = useReveal()
+
   return (
     <>
       <section className="page-hero story-hero">
+        <div className="page-hero-img-wrap">
+          <div className="page-hero-bg story-hero-bg" ref={heroRef} />
+        </div>
         <div className="page-hero-overlay" />
         <div className="page-hero-content">
           <p className="section-label">About Us</p>
@@ -13,7 +24,7 @@ function OurStory() {
       </section>
 
       <section className="section story-family">
-        <div className="container story-family-inner">
+        <div className="container story-family-inner reveal" ref={familyRef}>
           <p className="section-label">Since 1956</p>
           <h2>A Family Business</h2>
           <blockquote className="founder-quote">
@@ -38,89 +49,68 @@ function OurStory() {
 
       <section className="section story-designers">
         <div className="container story-designers-grid">
-          <div className="story-designers-text">
+          <div className="story-designers-text reveal-left" ref={designersTextRef}>
             <p className="section-label">Our Team</p>
             <h2>Expert Kitchen Designers</h2>
             <p>
               Our team of accomplished designers specializes in kitchen design to
               help our clients&apos; dream kitchens come to life. We believe in an
-              honest and open exchange of ideas to get the best results. We are a
-              family company with a unique team-oriented style.
+              honest and open exchange of ideas to get the best results.
             </p>
             <p>
               Whether you simply need a fresh look with new cabinets or a total
-              kitchen renovation, we are your one-stop resource. Saving you the time
-              and hassle of coordinating many different resources, Nukitchens has a
-              team of professionals that can take care of each and every step in the
-              process.
+              kitchen renovation, we are your one-stop resource. Nukitchens has a
+              team of professionals that can take care of each and every step.
             </p>
             <p>
-              When you choose to do business with us, you can be assured that all the
-              details will be taken care of by our Nukitchens team. Our designers
-              collaborate with each other and our clients for the best results. We
-              have strong beliefs and high standards in our work. We foster fresh
-              ideas to create the kitchen lifestyle that&apos;s right for you.
+              Our designers collaborate with each other and our clients for the best
+              results. We foster fresh ideas to create the kitchen lifestyle
+              that&apos;s right for you.
             </p>
           </div>
-          <div className="story-designers-image">
-            <div
-              className="story-image-placeholder"
-              style={{ backgroundImage: "url('/images/portfolio/07.jpg')" }}
-            />
+          <div className="story-designers-image" ref={designersImgRef}>
+            <div className="plx-box plx-box-portrait">
+              <img src="/images/portfolio/07.jpg" alt="Nukitchens design team" className="plx" loading="lazy" />
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="section story-values">
+      <section className="section story-values" ref={valuesRef}>
         <div className="container">
-          <div className="story-values-header">
+          <div className="story-values-header" data-animate="1">
             <p className="section-label">Our Approach</p>
             <h2>What Sets Us Apart</h2>
           </div>
           <div className="values-grid">
-            <div className="value-item">
+            <div className="value-item" data-animate="1">
               <div className="value-line" />
               <h3>Quality Materials</h3>
-              <p>
-                We source only the finest materials, ensuring every cabinet,
-                countertop, and fixture stands the test of time.
-              </p>
+              <p>We source only the finest materials, ensuring every cabinet, countertop, and fixture stands the test of time.</p>
             </div>
-            <div className="value-item">
+            <div className="value-item" data-animate="2">
               <div className="value-line" />
               <h3>Personal Service</h3>
-              <p>
-                Every project gets our full attention. From the first consultation
-                to final installation, you work directly with our team.
-              </p>
+              <p>Every project gets our full attention. From the first consultation to final installation, you work directly with our team.</p>
             </div>
-            <div className="value-item">
+            <div className="value-item" data-animate="3">
               <div className="value-line" />
               <h3>Honest Pricing</h3>
-              <p>
-                No hidden fees, no surprises. We&apos;re transparent about costs
-                because trust is the foundation of great work.
-              </p>
+              <p>No hidden fees, no surprises. We&apos;re transparent about costs because trust is the foundation of great work.</p>
             </div>
-            <div className="value-item">
+            <div className="value-item" data-animate="4">
               <div className="value-line" />
               <h3>Timeless Design</h3>
-              <p>
-                We design kitchens that look beautiful today and will continue
-                to feel fresh and relevant for years to come.
-              </p>
+              <p>We design kitchens that look beautiful today and will continue to feel fresh and relevant for years to come.</p>
             </div>
           </div>
         </div>
       </section>
 
       <section className="section story-cta">
-        <div className="container story-cta-inner">
+        <div className="container story-cta-inner reveal" ref={ctaRef}>
           <h2>Come See for Yourself</h2>
-          <p>
-            Visit our showroom to experience the quality of our work firsthand
-            and start the conversation about your dream kitchen.
-          </p>
+          <p>Visit our showroom to experience the quality of our work firsthand and start the conversation about your dream kitchen.</p>
           <Link to="/showroom" className="btn btn-primary">Visit Showroom</Link>
         </div>
       </section>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useReveal, useRevealChildren, useHeroScroll } from '../hooks/useScrollAnimations'
 import './Portfolio.css'
 
 const projects = [
@@ -15,6 +16,9 @@ const categories = ['all', 'modern', 'classic', 'contemporary']
 
 function Portfolio() {
   const [activeFilter, setActiveFilter] = useState('all')
+  const heroRef = useHeroScroll()
+  const gridRef = useRevealChildren()
+  const ctaRef = useReveal()
 
   const filtered = activeFilter === 'all'
     ? projects
@@ -23,6 +27,9 @@ function Portfolio() {
   return (
     <>
       <section className="page-hero">
+        <div className="page-hero-img-wrap">
+          <div className="page-hero-bg" ref={heroRef} />
+        </div>
         <div className="page-hero-overlay" />
         <div className="page-hero-content">
           <p className="section-label">Our Work</p>
@@ -44,10 +51,12 @@ function Portfolio() {
             ))}
           </div>
 
-          <div className="portfolio-grid">
-            {filtered.map(project => (
-              <div key={project.id} className="portfolio-item">
-                <img src={project.image} alt={project.title} loading="lazy" />
+          <div className="portfolio-grid" ref={gridRef}>
+            {filtered.map((project, i) => (
+              <div key={project.id} className="portfolio-item" data-animate={String((i % 3) + 1)}>
+                <div className="portfolio-img-wrap">
+                  <img src={project.image} alt={project.title} loading="lazy" />
+                </div>
                 <div className="portfolio-overlay">
                   <h3>{project.title}</h3>
                   <p>{project.location}</p>
@@ -59,7 +68,7 @@ function Portfolio() {
       </section>
 
       <section className="section portfolio-cta">
-        <div className="container portfolio-cta-inner">
+        <div className="container portfolio-cta-inner reveal" ref={ctaRef}>
           <h2>Like what you see?</h2>
           <p>Let&apos;s create your dream kitchen.</p>
           <Link to="/showroom" className="btn btn-primary">Visit Showroom</Link>

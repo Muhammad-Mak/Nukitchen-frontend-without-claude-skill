@@ -1,4 +1,41 @@
-/* Hero */
+/* ============================================================
+   PARALLAX IMAGE BOX SYSTEM
+
+   .plx-box  = overflow:hidden container (clips the image)
+   .plx      = the image, taller than its container
+
+   JS translates .plx from translateY(0) → translateY(-240px)
+   as .plx scrolls into view via IntersectionObserver.
+   ============================================================ */
+.plx-box {
+  position: relative;
+  overflow: hidden;
+}
+
+.plx-box .plx {
+  display: block;
+  width: 100%;
+  height: calc(100% + 260px);
+  max-width: none;
+  object-fit: cover;
+  will-change: transform;
+}
+
+/* Aspect ratio variants */
+.plx-box-43     { aspect-ratio: 4 / 3; }
+.plx-box-square { aspect-ratio: 1 / 1; }
+.plx-box-wide   { height: 75vh; min-height: 400px; }
+.plx-box-fill   { position: absolute; inset: 0; }
+
+.plx-box-fill .plx {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* ============================================================
+   HERO — slow breathing zoom + scroll-driven parallax
+   ============================================================ */
 .hero {
   position: relative;
   height: 100vh;
@@ -7,21 +44,160 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  background: url('/images/hero/hero-1.jpg') center/cover no-repeat;
   color: var(--color-white);
+  overflow: hidden;
+}
+
+.hero-img-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* ── LAYOUT-MORPHING SLIDESHOW ── */
+.hero-layout {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  gap: 6px;
+  will-change: opacity;
+}
+
+/* Layout variants */
+.hero-layout-single {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
+.hero-layout-split {
+  grid-template-columns: 1.4fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.hero-layout-trio {
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+}
+
+/* Grid cells */
+.hero-cell {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-cell-full {
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
+}
+
+.hero-cell-left {
+  grid-column: 1;
+  grid-row: 1 / -1;
+}
+
+.hero-cell-right-top {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.hero-cell-right-bottom {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.hero-cell-third {
+  /* auto placement in 3-col grid */
+}
+
+/* The image inside each cell */
+.hero-img {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  will-change: transform;
+  animation: heroBreath 18s ease-in-out infinite;
+}
+
+/* ── ENTRANCE: cells animate in with stagger ── */
+.hero-layout.is-active {
+  opacity: 1;
+  animation: layoutFadeIn 0.8s ease both;
+}
+
+.hero-layout.is-active .hero-cell {
+  animation: cellReveal 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-layout.is-active .hero-cell:nth-child(1) { animation-delay: 0s; }
+.hero-layout.is-active .hero-cell:nth-child(2) { animation-delay: 0.15s; }
+.hero-layout.is-active .hero-cell:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes layoutFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes cellReveal {
+  from {
+    opacity: 0;
+    clip-path: inset(8% 8% 8% 8%);
+    transform: scale(1.06);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: scale(1);
+  }
+}
+
+/* ── EXIT: fade out ── */
+.hero-layout.is-leaving {
+  animation: layoutFadeOut 0.8s ease both;
+}
+
+@keyframes layoutFadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ── Hero content entrance/exit ── */
+.hero-content.is-active {
+  animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+.hero-content.is-leaving {
+  animation: heroContentOut 0.6s ease both;
+}
+
+@keyframes heroContentOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-30px); }
+}
+
+@keyframes heroBreath {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: var(--color-overlay);
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 2;
 }
 
 .hero-content {
   position: relative;
-  z-index: 1;
+  z-index: 3;
   max-width: 700px;
   padding: 0 var(--space-lg);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(50px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .hero-label {
@@ -30,8 +206,8 @@
   font-weight: 600;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--color-white);
-  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
   margin-bottom: var(--space-md);
 }
 
@@ -46,7 +222,6 @@
 .hero-subtitle {
   font-family: var(--font-accent);
   font-size: clamp(1.1rem, 2vw, 1.4rem);
-  font-weight: 400;
   color: rgba(255, 255, 255, 0.85);
   margin-bottom: var(--space-xl);
   line-height: 1.6;
@@ -59,7 +234,7 @@
   flex-wrap: wrap;
 }
 
-.hero-scroll {
+.hero-scroll-indicator {
   position: absolute;
   bottom: 40px;
   left: 50%;
@@ -68,20 +243,21 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-sm);
-  z-index: 1;
+  z-index: 3;
+  animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 1.4s both;
 }
 
-.hero-scroll span {
+.hero-scroll-indicator span {
   font-size: 0.7rem;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .scroll-line {
   width: 1px;
   height: 40px;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.25);
   position: relative;
   overflow: hidden;
 }
@@ -94,43 +270,147 @@
   width: 100%;
   height: 100%;
   background: var(--color-white);
-  animation: scrollDown 2s ease-in-out infinite;
+  animation: scrollPulse 2s ease-in-out infinite;
 }
 
-@keyframes scrollDown {
-  0% { top: -100%; }
+@keyframes scrollPulse {
+  0%   { top: -100%; }
   100% { top: 100%; }
 }
 
-/* Intro */
-.intro-grid {
+/* ============================================================
+   DUO — 2 images side by side, slide in from left & right
+   ============================================================ */
+.duo-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-xl);
-  align-items: center;
+  gap: var(--space-lg);
 }
 
-.intro-image-placeholder {
-  width: 100%;
-  aspect-ratio: 4/5;
-  background: url('/images/portfolio/01.jpg') center/cover no-repeat;
-  border-radius: 2px;
+.duo-item .plx-box {
+  aspect-ratio: 4 / 3;
+  margin-bottom: var(--space-md);
 }
 
-.intro-text {
-  max-width: 480px;
+.duo-caption h3 {
+  font-size: 1.1rem;
+  margin-bottom: 4px;
 }
 
-.intro-text p {
+.duo-caption p {
+  font-size: 0.9rem;
+}
+
+/* Slide-in animations — triggered by IntersectionObserver on parent */
+.anim-slide-left {
+  opacity: 0;
+  transform: translateX(-80px);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.anim-slide-right {
+  opacity: 0;
+  transform: translateX(80px);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: 0.15s;
+}
+
+/* Triggered when parent section scrolls into view */
+.section-duo .anim-slide-left,
+.section-duo .anim-slide-right {
+  /* stays hidden until JS adds in-view to PARENT */
+}
+
+/* We need an observer on the duo section itself */
+.section-duo.observed .anim-slide-left,
+.section-duo.observed .anim-slide-right {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ============================================================
+   INTRO TEXT
+   ============================================================ */
+.section-intro {
+  text-align: center;
+}
+
+.intro-inner {
+  max-width: var(--max-width-narrow);
+  margin: 0 auto;
+}
+
+.intro-inner p {
   margin-bottom: var(--space-lg);
+  font-size: 1.05rem;
 }
 
-.intro-text .btn {
+.intro-inner .btn {
+  margin-top: var(--space-sm);
+}
+
+/* ============================================================
+   FULL-BLEED — single wide parallax image
+   ============================================================ */
+.section-fullbleed {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ============================================================
+   TRIO — 3 images in a row, staggered entrance
+   ============================================================ */
+.trio-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.trio-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+}
+
+.trio-item {
+  text-align: center;
+}
+
+.trio-label {
   margin-top: var(--space-md);
+  font-size: 0.95rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-family: var(--font-body);
+  font-weight: 600;
 }
 
-/* Services */
-.services {
+/* Staggered animation */
+.anim-stagger-1,
+.anim-stagger-2,
+.anim-stagger-3 {
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.anim-stagger-1 { transition-delay: 0s; }
+.anim-stagger-2 { transition-delay: 0.15s; }
+.anim-stagger-3 { transition-delay: 0.3s; }
+
+.section-trio.observed .anim-stagger-1,
+.section-trio.observed .anim-stagger-2,
+.section-trio.observed .anim-stagger-3 {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================================
+   SERVICES
+   ============================================================ */
+.section-services {
   background: var(--color-bg-warm);
 }
 
@@ -148,11 +428,12 @@
 .service-card {
   padding: var(--space-xl) var(--space-lg);
   background: var(--color-white);
-  transition: box-shadow var(--transition-base);
+  transition: box-shadow 0.6s ease, transform 0.6s ease;
 }
 
 .service-card:hover {
   box-shadow: var(--shadow-lg);
+  transform: translateY(-6px);
 }
 
 .service-number {
@@ -163,15 +444,12 @@
   margin-bottom: var(--space-lg);
 }
 
-.service-card h3 {
-  margin-bottom: var(--space-md);
-}
+.service-card h3 { margin-bottom: var(--space-md); }
+.service-card p { font-size: 0.95rem; }
 
-.service-card p {
-  font-size: 0.95rem;
-}
-
-/* Featured Work */
+/* ============================================================
+   FEATURED
+   ============================================================ */
 .featured-header {
   display: flex;
   justify-content: space-between;
@@ -184,7 +462,7 @@
   grid-template-columns: 1.2fr 1fr;
   grid-template-rows: 1fr 1fr;
   gap: var(--space-md);
-  min-height: 600px;
+  min-height: 650px;
 }
 
 .featured-item {
@@ -197,72 +475,56 @@
   grid-row: 1 / -1;
 }
 
-.featured-image-placeholder {
-  width: 100%;
-  height: 100%;
-  min-height: 280px;
-  background: var(--color-bg-accent);
-  transition: transform var(--transition-slow);
-}
-
-.featured-large .featured-image-placeholder {
-  background: url('/images/portfolio/02.jpg') center/cover no-repeat;
-}
-
-.featured-item:nth-child(2) .featured-image-placeholder {
-  background: url('/images/portfolio/03.jpg') center/cover no-repeat;
-}
-
-.featured-item:nth-child(3) .featured-image-placeholder {
-  background: url('/images/portfolio/04.jpg') center/cover no-repeat;
-}
-
-.featured-item:hover .featured-image-placeholder {
-  transform: scale(1.05);
-}
-
-.featured-overlay {
+.featured-label {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   padding: var(--space-lg);
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.65));
   color: var(--color-white);
-  transform: translateY(20px);
-  opacity: 0;
-  transition: all var(--transition-base);
+  transform: translateY(100%);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
 }
 
-.featured-item:hover .featured-overlay {
+.featured-item:hover .featured-label {
   transform: translateY(0);
-  opacity: 1;
 }
 
-.featured-overlay h3 {
+.featured-label h3 {
   color: var(--color-white);
   font-size: 1.2rem;
   margin-bottom: 4px;
 }
 
-.featured-overlay p {
+.featured-label p {
   font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.8);
 }
 
-/* CTA Banner */
-.cta-banner {
+/* ============================================================
+   CTA
+   ============================================================ */
+.section-cta {
   position: relative;
   padding: var(--space-3xl) 0;
-  background: url('/images/hero/hero-3.jpg') center/cover no-repeat;
   text-align: center;
   color: var(--color-white);
+  overflow: hidden;
 }
 
-.cta-overlay {
+.section-cta .cta-bg {
+  position: absolute;
+  inset: -60px 0;
+  background: url('/images/hero/hero-3.jpg') center/cover no-repeat;
+  animation: heroBreath 22s ease-in-out infinite;
+}
+
+.section-cta .cta-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.55);
 }
 
 .cta-content {
@@ -290,7 +552,9 @@
   flex-wrap: wrap;
 }
 
-/* Trusted Partners Strip */
+/* ============================================================
+   TRUSTED
+   ============================================================ */
 .trusted-strip {
   padding: var(--space-lg) 0;
   background: var(--color-bg-warm);
@@ -314,11 +578,7 @@
   color: var(--color-text-light);
 }
 
-.trusted-links {
-  display: flex;
-  gap: var(--space-md);
-  flex-wrap: wrap;
-}
+.trusted-links { display: flex; gap: var(--space-md); flex-wrap: wrap; }
 
 .trusted-badge {
   display: inline-block;
@@ -329,7 +589,6 @@
   text-transform: uppercase;
   color: var(--color-text);
   border: 1px solid var(--color-border);
-  border-radius: 2px;
   text-decoration: none;
   transition: all var(--transition-base);
 }
@@ -339,12 +598,14 @@
   border-color: var(--color-accent);
 }
 
-/* Why Nukitchens */
-.why-nukitchens {
+/* ============================================================
+   STATS
+   ============================================================ */
+.section-stats {
   background: var(--color-bg-warm);
 }
 
-.why-header {
+.stats-header {
   text-align: center;
   margin-bottom: var(--space-xl);
 }
@@ -380,20 +641,28 @@
   color: var(--color-text-light);
 }
 
-/* Responsive */
+/* ============================================================
+   SHARED ANIMATION CLASSES
+   ============================================================ */
+.anim-fade-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.anim-fade-up.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 768px) {
-  .intro-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-lg);
-  }
-
-  .intro-image {
-    order: -1;
-  }
-
-  .services-grid {
-    grid-template-columns: 1fr;
-  }
+  .duo-grid { grid-template-columns: 1fr; }
+  .trio-grid { grid-template-columns: 1fr; gap: var(--space-md); }
+  .services-grid { grid-template-columns: 1fr; }
 
   .featured-header {
     flex-direction: column;
@@ -407,26 +676,34 @@
     min-height: auto;
   }
 
-  .featured-large {
-    grid-row: auto;
-  }
+  .featured-large { grid-row: auto; }
+  .featured-item { min-height: 300px; }
 
-  .featured-overlay {
+  .featured-label {
     transform: translateY(0);
-    opacity: 1;
   }
 
-  .hero-scroll {
-    display: none;
-  }
-
-  .stats-row {
+  .hero-layout-split {
     grid-template-columns: 1fr;
-    gap: var(--space-md);
+    grid-template-rows: 1.4fr 1fr;
   }
+  .hero-cell-left { grid-row: 1; }
+  .hero-cell-right-top { grid-column: 1; grid-row: 2; }
+  .hero-cell-right-bottom { display: none; }
+  .hero-layout-trio {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+  .hero-layout-trio .hero-cell-third:nth-child(3) { display: none; }
 
-  .trusted-inner {
-    flex-direction: column;
-    gap: var(--space-md);
-  }
+  .hero-scroll-indicator { display: none; }
+  .stats-row { grid-template-columns: 1fr; gap: var(--space-md); }
+  .trusted-inner { flex-direction: column; gap: var(--space-md); }
+
+  .plx-box-wide { height: 50vh; min-height: 280px; }
+  .plx-box .plx { height: calc(100% + 150px); }
+  .plx-box-fill .plx { height: calc(100% + 150px); }
+
+  .anim-slide-left { transform: translateX(-40px); }
+  .anim-slide-right { transform: translateX(40px); }
 }

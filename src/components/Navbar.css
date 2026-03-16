@@ -5,7 +5,14 @@
   right: 0;
   z-index: 1000;
   padding: 24px 48px;
-  transition: all var(--transition-base);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.4s ease,
+              box-shadow 0.4s ease,
+              padding 0.4s ease;
+}
+
+.navbar.navbar-hidden {
+  transform: translateY(-100%);
 }
 
 .navbar.scrolled,

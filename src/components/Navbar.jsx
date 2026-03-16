@@ -1,15 +1,37 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import './Navbar.css'
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false)
+  const [hidden, setHidden] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
+  const lastScrollY = useRef(0)
+  const ticking = useRef(false)
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', handleScroll)
+    const handleScroll = () => {
+      if (ticking.current) return
+      ticking.current = true
+
+      requestAnimationFrame(() => {
+        const currentY = window.scrollY
+        setScrolled(currentY > 50)
+
+        // Only hide/show after scrolling past 300px threshold
+        if (currentY > 300) {
+          setHidden(currentY > lastScrollY.current && currentY - lastScrollY.current > 5)
+        } else {
+          setHidden(false)
+        }
+
+        lastScrollY.current = currentY
+        ticking.current = false
+      })
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
@@ -20,7 +42,7 @@ function Navbar() {
   const isHome = location.pathname === '/'
 
   return (
-    <nav className={`navbar ${scrolled ? 'scrolled' : ''} ${!isHome ? 'navbar-dark' : ''}`}>
+    <nav className={`navbar ${scrolled ? 'scrolled' : ''} ${!isHome ? 'navbar-dark' : ''} ${hidden && !menuOpen ? 'navbar-hidden' : ''}`}>
       <div className="navbar-inner">
         <Link to="/" className="navbar-logo">
           <img src="/images/logo.png" alt="Nukitchens" className="logo-img" />
