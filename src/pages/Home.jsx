@@ -52,23 +52,53 @@ const heroSlides = [
 
 const SLIDE_DURATION = 5000
 
+function renderSlideCells(s) {
+  if (s.layout === 'single') {
+    return (
+      <div className="hero-cell hero-cell-full">
+        <div className="hero-img" style={{ backgroundImage: `url(${s.images[0]})` }} />
+      </div>
+    )
+  }
+  if (s.layout === 'split') {
+    return (
+      <>
+        <div className="hero-cell hero-cell-left">
+          <div className="hero-img" style={{ backgroundImage: `url(${s.images[0]})` }} />
+        </div>
+        <div className="hero-cell hero-cell-right-top">
+          <div className="hero-img" style={{ backgroundImage: `url(${s.images[1]})` }} />
+        </div>
+        <div className="hero-cell hero-cell-right-bottom">
+          <div className="hero-img" style={{ backgroundImage: `url(${s.images[2]})` }} />
+        </div>
+      </>
+    )
+  }
+  // trio
+  return (
+    <>
+      <div className="hero-cell hero-cell-third">
+        <div className="hero-img" style={{ backgroundImage: `url(${s.images[0]})` }} />
+      </div>
+      <div className="hero-cell hero-cell-third">
+        <div className="hero-img" style={{ backgroundImage: `url(${s.images[1]})` }} />
+      </div>
+      <div className="hero-cell hero-cell-third">
+        <div className="hero-img" style={{ backgroundImage: `url(${s.images[2]})` }} />
+      </div>
+    </>
+  )
+}
+
 function Home() {
   const heroRef = useHeroScroll()
   const [activeIndex, setActiveIndex] = useState(0)
-  const [leaving, setLeaving] = useState(false)
   const timerRef = useRef(null)
 
-  const goTo = useCallback((idx) => {
-    setLeaving(true)
-    setTimeout(() => {
-      setActiveIndex(idx)
-      setLeaving(false)
-    }, 800) // fade-out duration
-  }, [])
-
   const advance = useCallback(() => {
-    goTo((activeIndex + 1) % heroSlides.length)
-  }, [activeIndex, goTo])
+    setActiveIndex((prev) => (prev + 1) % heroSlides.length)
+  }, [])
 
   useEffect(() => {
     timerRef.current = setInterval(advance, SLIDE_DURATION)
@@ -99,45 +129,19 @@ function Home() {
       {/* ── HERO ── layout-morphing slideshow */}
       <section className="hero">
         <div className="hero-img-wrap" ref={heroRef}>
-          {/* The image layout — changes shape per slide */}
-          <div className={`hero-layout hero-layout-${slide.layout} ${leaving ? 'is-leaving' : 'is-active'}`} key={activeIndex}>
-            {slide.layout === 'single' && (
-              <div className="hero-cell hero-cell-full">
-                <div className="hero-img" style={{ backgroundImage: `url(${slide.images[0]})` }} />
-              </div>
-            )}
-            {slide.layout === 'split' && (
-              <>
-                <div className="hero-cell hero-cell-left">
-                  <div className="hero-img" style={{ backgroundImage: `url(${slide.images[0]})` }} />
-                </div>
-                <div className="hero-cell hero-cell-right-top">
-                  <div className="hero-img" style={{ backgroundImage: `url(${slide.images[1]})` }} />
-                </div>
-                <div className="hero-cell hero-cell-right-bottom">
-                  <div className="hero-img" style={{ backgroundImage: `url(${slide.images[2]})` }} />
-                </div>
-              </>
-            )}
-            {slide.layout === 'trio' && (
-              <>
-                <div className="hero-cell hero-cell-third">
-                  <div className="hero-img" style={{ backgroundImage: `url(${slide.images[0]})` }} />
-                </div>
-                <div className="hero-cell hero-cell-third">
-                  <div className="hero-img" style={{ backgroundImage: `url(${slide.images[1]})` }} />
-                </div>
-                <div className="hero-cell hero-cell-third">
-                  <div className="hero-img" style={{ backgroundImage: `url(${slide.images[2]})` }} />
-                </div>
-              </>
-            )}
-          </div>
+          {heroSlides.map((s, i) => (
+            <div
+              key={i}
+              className={`hero-layout hero-layout-${s.layout} ${i === activeIndex ? 'is-active' : 'is-hidden'}`}
+            >
+              {renderSlideCells(s)}
+            </div>
+          ))}
         </div>
 
         <div className="hero-overlay" />
 
-        <div className={`hero-content ${leaving ? 'is-leaving' : 'is-active'}`} key={`text-${activeIndex}`}>
+        <div className="hero-content is-active">
           <p className="hero-label">{slide.label}</p>
           <h1 className="hero-title">{slide.title}</h1>
           <p className="hero-subtitle">{slide.subtitle}</p>

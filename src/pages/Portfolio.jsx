@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { useReveal, useRevealChildren, useHeroScroll } from '../hooks/useScrollAnimations'
+import { useReveal, useHeroScroll } from '../hooks/useScrollAnimations'
 import './Portfolio.css'
 
 const projects = [
@@ -17,12 +17,38 @@ const categories = ['all', 'modern', 'classic', 'contemporary']
 function Portfolio() {
   const [activeFilter, setActiveFilter] = useState('all')
   const heroRef = useHeroScroll()
-  const gridRef = useRevealChildren()
+  const gridRef = useRef(null)
   const ctaRef = useReveal()
 
   const filtered = activeFilter === 'all'
     ? projects
     : projects.filter(p => p.category === activeFilter)
+
+  useEffect(() => {
+    const container = gridRef.current
+    if (!container) return
+
+    const targets = container.querySelectorAll('[data-animate]')
+    if (!targets.length) return
+
+    // Remove stale in-view so new items can animate in
+    targets.forEach((t) => t.classList.remove('in-view'))
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view')
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -80px 0px' }
+    )
+
+    targets.forEach((t) => observer.observe(t))
+    return () => observer.disconnect()
+  }, [activeFilter])
 
   return (
     <>

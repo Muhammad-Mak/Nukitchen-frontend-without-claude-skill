@@ -109,70 +109,44 @@
   /* auto placement in 3-col grid */
 }
 
-/* The image inside each cell */
+/* The image inside each cell — continuous slow zoom */
 .hero-img {
   position: absolute;
   inset: 0;
   background-size: cover;
   background-position: center;
   will-change: transform;
-  animation: heroBreath 18s ease-in-out infinite;
+  transform: scale(1);
+  transition: transform 8s ease-out;
 }
 
-/* ── ENTRANCE: cells animate in with stagger ── */
+.hero-layout.is-active .hero-img {
+  transform: scale(1.15);
+}
+
+/* All slides hidden by default */
+.hero-layout.is-hidden {
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Active slide crossfades in */
 .hero-layout.is-active {
   opacity: 1;
-  animation: layoutFadeIn 0.8s ease both;
+  z-index: 2;
+  transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.hero-layout.is-active .hero-cell {
-  animation: cellReveal 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+/* When going from hidden → active, transition handles the fade.
+   When going from active → hidden, also fade out smoothly. */
+.hero-layout {
+  transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.hero-layout.is-active .hero-cell:nth-child(1) { animation-delay: 0s; }
-.hero-layout.is-active .hero-cell:nth-child(2) { animation-delay: 0.15s; }
-.hero-layout.is-active .hero-cell:nth-child(3) { animation-delay: 0.3s; }
-
-@keyframes layoutFadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes cellReveal {
-  from {
-    opacity: 0;
-    clip-path: inset(8% 8% 8% 8%);
-    transform: scale(1.06);
-  }
-  to {
-    opacity: 1;
-    clip-path: inset(0 0 0 0);
-    transform: scale(1);
-  }
-}
-
-/* ── EXIT: fade out ── */
-.hero-layout.is-leaving {
-  animation: layoutFadeOut 0.8s ease both;
-}
-
-@keyframes layoutFadeOut {
-  from { opacity: 1; }
-  to   { opacity: 0; }
-}
-
-/* ── Hero content entrance/exit ── */
+/* ── Hero content entrance ── */
 .hero-content.is-active {
   animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
-}
-
-.hero-content.is-leaving {
-  animation: heroContentOut 0.6s ease both;
-}
-
-@keyframes heroContentOut {
-  from { opacity: 1; transform: translateY(0); }
-  to   { opacity: 0; transform: translateY(-30px); }
 }
 
 @keyframes heroBreath {
